@@ -84,6 +84,15 @@ input,select,button.fake{width:100%;padding:10px;border-radius:10px;border:1px s
 <label>Logo PNG</label>
 <input id="logoUpload" type="file" accept="image/png,image/*">
 <button class="fake" id="logoRemove">Remove Logo</button>
+
+<label>Logo Zoom</label><input id="logoScale" type="range" min="50" max="200" value="100">
+<label>Logo Rotation</label><input id="logoRotate" type="range" min="-180" max="180" value="0">
+<label>Logo Horizontal Offset</label><input id="logoX" type="range" min="-200" max="200" value="0">
+<label>Logo Vertical Offset</label><input id="logoY" type="range" min="-200" max="200" value="0">
+<label>Logo Brightness</label><input id="logoBrightness" type="range" min="0" max="200" value="100">
+<label>Logo Contrast</label><input id="logoContrast" type="range" min="0" max="200" value="100">
+<label>Logo Saturation</label><input id="logoSaturation" type="range" min="0" max="200" value="100">
+
 <label>FX Overlay</label>
 <input id="fxUpload" type="file" accept="image/*">
 <button class="fake" id="fxRemove">Remove FX</button>
@@ -150,7 +159,7 @@ const studioState={
   layers:{
     background:{image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100},
     pattern:{image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100},
-    logo:{image:null,scale:100,rotate:0,x:0,y:0},
+    logo:{image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100},
     fx:{image:null,order:'above'}
   },
   border:{style:"Classic",width:10,radius:22,color:"#111827"},
@@ -168,6 +177,7 @@ function renderLogo(){
  el.src=l.image;
  el.style.display="block";
  el.style.transform=`translate(${l.x}px,${l.y}px) scale(${l.scale/100}) rotate(${l.rotate}deg)`;
+ el.style.filter=`brightness(${l.brightness}%) contrast(${l.contrast}%) saturate(${l.saturation}%)`;
 }
 function renderFX(){
  const fx=document.getElementById('fxLayer');
@@ -249,7 +259,7 @@ document.querySelector('.reset').addEventListener('click',()=>{
   };
   studioState.layers.background={image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100};
   studioState.layers.pattern={image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100};
-  studioState.layers.logo={image:null,scale:100,rotate:0,x:0,y:0};
+  studioState.layers.logo={image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100};
   studioState.layers.fx={image:null,order:'above'};
   ['logoInput','collectionInput','seriesInput','taglineInput','serialInput'].forEach(id=>{});
   logoInput.value=studioState.branding.logo;
@@ -359,6 +369,20 @@ document.getElementById("logoRemove").addEventListener("click",()=>{
  renderStudio();
 });
 
+
+
+[
+['logoScale','scale'],['logoRotate','rotate'],['logoX','x'],['logoY','y'],
+['logoBrightness','brightness'],['logoContrast','contrast'],['logoSaturation','saturation']
+].forEach(([id,key])=>{
+ const el=document.getElementById(id);
+ if(el){
+  el.addEventListener('input',e=>{
+    studioState.layers.logo[key]=Number(e.target.value);
+    renderStudio();
+  });
+ }
+});
 
 document.getElementById('fxUpload').addEventListener('change',e=>{
  const f=e.target.files[0]; if(!f)return;
