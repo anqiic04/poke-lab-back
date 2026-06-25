@@ -284,43 +284,55 @@ bindInput("seriesInput","series");
 bindInput("taglineInput","tagline");
 bindInput("serialInput","serial");
 
+
 document.querySelector('.reset').addEventListener('click',()=>{
-  studioState.branding={
-    logo:'GGAM?',collection:'XANDER COLLECTION',series:'Founder Series',tagline:'From Our Hearts To Their Paws',serial:'001 / 050'
+  const resetLayer=(name,obj)=>{
+    studioState.layers[name]=JSON.parse(JSON.stringify(obj));
   };
-  studioState.layers.background={image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100};
-  studioState.layers.pattern={image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100};
-  studioState.layers.logo={image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100};
-  studioState.layers.fx={image:null,order:'above'};
-  ['logoInput','collectionInput','seriesInput','taglineInput','serialInput'].forEach(id=>{});
-  logoInput.value=studioState.branding.logo;
-  collectionInput.value=studioState.branding.collection;
-  seriesInput.value=studioState.branding.series;
-  taglineInput.value=studioState.branding.tagline;
-  serialInput.value=studioState.branding.serial;
-  if(bgUpload){bgUpload.value='';}
-  if(patternUpload){patternUpload.value='';}
-  if(logoUpload){logoUpload.value='';}
-  if(fxUpload){fxUpload.value='';}
-  fxOrder.value='above';
-  borderWidth.value=10;
-  borderRadius.value=22;
-  borderColor.value='#111827';
+  studioState.branding={
+    logo:'GGAM?',
+    collection:'XANDER COLLECTION',
+    series:'Founder Series',
+    tagline:'From Our Hearts To Their Paws',
+    serial:'001 / 050'
+  };
+  resetLayer('background',{image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100});
+  resetLayer('pattern',{image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100});
+  resetLayer('logo',{image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100});
+  resetLayer('fx',{image:null,order:'above',scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100});
   studioState.border={style:'Classic',width:10,radius:22,color:'#111827'};
-  borderStyle.value='Classic';
-  const logoLayer=document.getElementById('logoLayer');
-  if(logoLayer){
-    logoLayer.removeAttribute('src');
-    logoLayer.style.display='none';
-  }
-  ['bgScale','bgRotate','bgX','bgY','bgBrightness','bgContrast','bgSaturation','patternScale','patternRotate','patternX','patternY','patternBrightness','patternContrast','patternSaturation'].forEach(id=>{
+
+  const values={
+    logoInput:'GGAM?',collectionInput:'XANDER COLLECTION',seriesInput:'Founder Series',taglineInput:'From Our Hearts To Their Paws',serialInput:'001 / 050',
+    borderStyle:'Classic',borderWidth:10,borderRadius:22,borderColor:'#111827',fxOrder:'above',
+    bgScale:100,bgRotate:0,bgX:0,bgY:0,bgBrightness:100,bgContrast:100,bgSaturation:100,
+    patternScale:100,patternRotate:0,patternX:0,patternY:0,patternBrightness:100,patternContrast:100,patternSaturation:100,
+    logoScale:100,logoRotate:0,logoX:0,logoY:0,logoBrightness:100,logoContrast:100,logoSaturation:100,
+    fxScale:100,fxRotate:0,fxX:0,fxY:0,fxBrightness:100,fxContrast:100,fxSaturation:100
+  };
+  Object.entries(values).forEach(([id,val])=>{
     const el=document.getElementById(id);
-    if(!el)return;
-    const map={bgScale:100,bgRotate:0,bgX:0,bgY:0,bgBrightness:100,bgContrast:100,bgSaturation:100,patternScale:100,patternRotate:0,patternX:0,patternY:0,patternBrightness:100,patternContrast:100,patternSaturation:100};
-    el.value=map[id];
+    if(el) el.value=val;
+  });
+  ['bgUpload','patternUpload','logoUpload','fxUpload'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  ['bgLayer','patternLayer'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.backgroundImage='none';
+  });
+  ['logoLayer','fxLayer'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){
+      el.removeAttribute('src');
+      el.style.display='none';
+      el.style.transform='';
+      el.style.filter='';
+    }
   });
   renderStudio();
 });
+
 
 
 function renderBackground(){
