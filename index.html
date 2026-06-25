@@ -32,6 +32,12 @@ input,select,button.fake{width:100%;padding:10px;border-radius:10px;border:1px s
 .branding-grid{display:grid;gap:12px}
 .field input{width:100%}
 
+
+.accordion{margin:14px 0;border:1px solid #334155;border-radius:10px;overflow:hidden}
+.acc-header{width:100%;padding:12px;background:#111827;color:#fbbf24;border:none;text-align:left;font-weight:700;cursor:pointer}
+.acc-body{display:none;padding:12px}
+.accordion.open .acc-body{display:block}
+
 </style>
 
 <style id="export-preview-style">
@@ -67,6 +73,7 @@ input,select,button.fake{width:100%;padding:10px;border-radius:10px;border:1px s
 </div>
 </div>
 <div class="tab" id="layers">
+<div class="accordion open"><button class="acc-header">Background</button><div class="acc-body">
 <label>Background Image</label>
 <input id="bgUpload" type="file" accept="image/*">
 <button class="fake" id="bgRemove">Remove Background</button>
@@ -78,10 +85,12 @@ input,select,button.fake{width:100%;padding:10px;border-radius:10px;border:1px s
 <label>Contrast</label><input id="bgContrast" type="range" min="0" max="200" value="100">
 <label>Saturation</label><input id="bgSaturation" type="range" min="0" max="200" value="100">
 
-<label>Pattern Image</label>
+</div></div>
+<div class="accordion"><button class="acc-header">Pattern</button><div class="acc-body"><label>Pattern Image</label>
 <input id="patternUpload" type="file" accept="image/*">
 <button class="fake" id="patternRemove">Remove Pattern</button>
-<label>Logo PNG</label>
+</div></div>
+<div class="accordion"><button class="acc-header">Logo</button><div class="acc-body"><label>Logo PNG</label>
 <input id="logoUpload" type="file" accept="image/png,image/*">
 <button class="fake" id="logoRemove">Remove Logo</button>
 
@@ -93,7 +102,8 @@ input,select,button.fake{width:100%;padding:10px;border-radius:10px;border:1px s
 <label>Logo Contrast</label><input id="logoContrast" type="range" min="0" max="200" value="100">
 <label>Logo Saturation</label><input id="logoSaturation" type="range" min="0" max="200" value="100">
 
-<label>FX Overlay</label>
+</div></div>
+<div class="accordion"><button class="acc-header">FX Overlay</button><div class="acc-body"><label>FX Overlay</label>
 <input id="fxUpload" type="file" accept="image/*">
 <button class="fake" id="fxRemove">Remove FX</button>
 <label>FX Position</label>
@@ -101,6 +111,7 @@ input,select,button.fake{width:100%;padding:10px;border-radius:10px;border:1px s
 <option value="above">Above Logo</option>
 <option value="below">Below Logo</option>
 </select>
+</div></div>
 </div>
 <div class="tab" id="border">
 <label>Border Style</label>
@@ -500,6 +511,14 @@ window.addEventListener('DOMContentLoaded',()=>{
       if(e.target===overlay) overlay.style.display='none';
     });
   }
+});
+
+
+document.querySelectorAll('.acc-header').forEach(btn=>{
+ btn.onclick=()=>{
+  document.querySelectorAll('.accordion').forEach(a=>a.classList.remove('open'));
+  btn.parentElement.classList.add('open');
+ };
 });
 
 </script>
