@@ -89,6 +89,15 @@ input,select,button.fake{width:100%;padding:10px;border-radius:10px;border:1px s
 <div class="accordion"><button class="acc-header">Pattern</button><div class="acc-body"><label>Pattern Image</label>
 <input id="patternUpload" type="file" accept="image/*">
 <button class="fake" id="patternRemove">Remove Pattern</button>
+
+<label>Zoom</label><input id="patternScale" type="range" min="50" max="200" value="100">
+<label>Rotation</label><input id="patternRotate" type="range" min="-180" max="180" value="0">
+<label>Horizontal Offset</label><input id="patternX" type="range" min="-200" max="200" value="0">
+<label>Vertical Offset</label><input id="patternY" type="range" min="-200" max="200" value="0">
+<label>Brightness</label><input id="patternBrightness" type="range" min="0" max="200" value="100">
+<label>Contrast</label><input id="patternContrast" type="range" min="0" max="200" value="100">
+<label>Saturation</label><input id="patternSaturation" type="range" min="0" max="200" value="100">
+
 </div></div>
 <div class="accordion"><button class="acc-header">Logo</button><div class="acc-body"><label>Logo PNG</label>
 <input id="logoUpload" type="file" accept="image/png,image/*">
@@ -293,10 +302,10 @@ document.querySelector('.reset').addEventListener('click',()=>{
     logoLayer.removeAttribute('src');
     logoLayer.style.display='none';
   }
-  ['bgScale','bgRotate','bgX','bgY','bgBrightness','bgContrast','bgSaturation'].forEach(id=>{
+  ['bgScale','bgRotate','bgX','bgY','bgBrightness','bgContrast','bgSaturation','patternScale','patternRotate','patternX','patternY','patternBrightness','patternContrast','patternSaturation'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
-    const map={bgScale:100,bgRotate:0,bgX:0,bgY:0,bgBrightness:100,bgContrast:100,bgSaturation:100};
+    const map={bgScale:100,bgRotate:0,bgX:0,bgY:0,bgBrightness:100,bgContrast:100,bgSaturation:100,patternScale:100,patternRotate:0,patternX:0,patternY:0,patternBrightness:100,patternContrast:100,patternSaturation:100};
     el.value=map[id];
   });
   renderStudio();
@@ -366,6 +375,20 @@ document.getElementById('patternRemove').addEventListener('click',()=>{
  renderStudio();
 });
 
+
+
+[
+['patternScale','scale'],['patternRotate','rotate'],['patternX','x'],['patternY','y'],
+['patternBrightness','brightness'],['patternContrast','contrast'],['patternSaturation','saturation']
+].forEach(([id,key])=>{
+ const el=document.getElementById(id);
+ if(el){
+   el.addEventListener('input',e=>{
+     studioState.layers.pattern[key]=Number(e.target.value);
+     renderStudio();
+   });
+ }
+});
 
 document.getElementById("logoUpload").addEventListener("change",e=>{
  const f=e.target.files[0];
