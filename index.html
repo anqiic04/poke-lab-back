@@ -18,8 +18,9 @@ main{display:grid;grid-template-columns:360px 1fr;gap:24px;padding:24px;max-widt
 label{display:block;margin:12px 0 6px;font-size:.8rem;color:#cbd5e1}
 input,select,button.fake{width:100%;padding:10px;border-radius:10px;border:1px solid #334155;background:#020617;color:#fff}
 .previewWrap{display:flex;align-items:center;justify-content:center;height:100%}
+.patternLayer,.bgLayer,#artStack,#logoLayer,#fxLayer{border-radius:inherit}
 .patternLayer{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.7;z-index:1}
-.bgLayer{position:absolute;inset:0;background-size:cover;background-position:center;border-radius:12px;z-index:0}
+.bgLayer{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0}
 .card{position:relative;overflow:hidden;width:350px;height:490px;border-radius:22px;background:linear-gradient(160deg,#334155,#111827);border:10px solid #111827;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;box-shadow:0 20px 40px rgba(0,0,0,.5)}
 .logo{font-size:48px;font-weight:900}.collection{margin-top:18px;letter-spacing:.3em;font-weight:700}
 .tag{margin-top:40px;font-style:italic;color:#cbd5e1}.series{margin-top:40px;color:#fbbf24;text-transform:uppercase;font-size:.85rem;letter-spacing:.3em}.serial{margin-top:10px;font-size:.8rem;color:#94a3b8}
@@ -202,6 +203,9 @@ function renderBorder(){
  c.style.borderWidth=b.width+'px';
  c.style.borderColor=b.color;
  c.style.borderRadius=b.radius+'px';
+ document.getElementById('bgLayer').style.borderRadius=b.radius+'px';
+ document.getElementById('patternLayer').style.borderRadius=b.radius+'px';
+ document.getElementById('artStack').style.borderRadius=b.radius+'px';
  const s=styles[b.style];
  if(s){
    c.style.background=s.bg;
