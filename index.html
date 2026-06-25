@@ -120,6 +120,15 @@ input,select,button.fake{width:100%;padding:10px;border-radius:10px;border:1px s
 <option value="above">Above Logo</option>
 <option value="below">Below Logo</option>
 </select>
+
+<label>Zoom</label><input id="fxScale" type="range" min="50" max="200" value="100">
+<label>Rotation</label><input id="fxRotate" type="range" min="-180" max="180" value="0">
+<label>Horizontal Offset</label><input id="fxX" type="range" min="-200" max="200" value="0">
+<label>Vertical Offset</label><input id="fxY" type="range" min="-200" max="200" value="0">
+<label>Brightness</label><input id="fxBrightness" type="range" min="0" max="200" value="100">
+<label>Contrast</label><input id="fxContrast" type="range" min="0" max="200" value="100">
+<label>Saturation</label><input id="fxSaturation" type="range" min="0" max="200" value="100">
+
 </div></div>
 </div>
 <div class="tab" id="border">
@@ -180,7 +189,7 @@ const studioState={
     background:{image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100},
     pattern:{image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100},
     logo:{image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100},
-    fx:{image:null,order:'above'}
+    fx:{image:null,order:'above',scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100}
   },
   border:{style:"Classic",width:10,radius:22,color:"#111827"},
 };
@@ -210,6 +219,8 @@ function renderFX(){
  }
  fx.src=f.image;
  fx.style.display='block';
+ fx.style.transform=`translate(${f.x}px,${f.y}px) scale(${f.scale/100}) rotate(${f.rotate}deg)`;
+ fx.style.filter=`brightness(${f.brightness}%) contrast(${f.contrast}%) saturate(${f.saturation}%)`;
 
  if(f.order==='below'){
    stack.insertBefore(fx,logo);
@@ -434,6 +445,15 @@ document.getElementById('fxOrder').addEventListener('change',e=>{
  renderStudio();
 });
 
+
+
+[
+['fxScale','scale'],['fxRotate','rotate'],['fxX','x'],['fxY','y'],
+['fxBrightness','brightness'],['fxContrast','contrast'],['fxSaturation','saturation']
+].forEach(([id,key])=>{
+ const el=document.getElementById(id);
+ if(el) el.addEventListener('input',e=>{studioState.layers.fx[key]=Number(e.target.value);renderStudio();});
+});
 
 ['borderWidth','borderRadius','borderColor'].forEach(id=>{
  document.getElementById(id).addEventListener('input',e=>{
