@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GGAM? Card Back Studio</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#020617;color:#e2e8f0}
+header{padding:18px 24px;background:#0f172a;border-bottom:1px solid #1e293b}
+header h1{margin:0;color:#fbbf24}header p{margin:6px 0 0;color:#94a3b8;font-size:.9rem}
+main{display:grid;grid-template-columns:360px 1fr;gap:24px;padding:24px;max-width:1400px;margin:auto}
+.panel{background:#0f172a;border:1px solid #1e293b;border-radius:18px;overflow:hidden}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #1e293b}
+.tabs button{background:none;border:none;color:#94a3b8;padding:14px;font-weight:700;cursor:pointer}
+.tabs button.active{color:#fbbf24;border-bottom:3px solid #fbbf24}
+.content{padding:20px}
+.tab{display:none}.tab.active{display:block}
+label{display:block;margin:12px 0 6px;font-size:.8rem;color:#cbd5e1}
+input,select,button.fake{width:100%;padding:10px;border-radius:10px;border:1px solid #334155;background:#020617;color:#fff}
+.previewWrap{display:flex;align-items:center;justify-content:center;height:100%}
+.patternLayer{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.7;z-index:1}
+.bgLayer{position:absolute;inset:0;background-size:cover;background-position:center;border-radius:12px;z-index:0}
+.card{position:relative;overflow:hidden;width:350px;height:490px;border-radius:22px;background:linear-gradient(160deg,#334155,#111827);border:10px solid #111827;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+.logo{font-size:48px;font-weight:900}.collection{margin-top:18px;letter-spacing:.3em;font-weight:700}
+.tag{margin-top:40px;font-style:italic;color:#cbd5e1}.series{margin-top:40px;color:#fbbf24;text-transform:uppercase;font-size:.85rem;letter-spacing:.3em}.serial{margin-top:10px;font-size:.8rem;color:#94a3b8}
+.footer{padding:16px;border-top:1px solid #1e293b;display:flex;justify-content:space-between}
+.footer button{padding:10px 18px;border-radius:10px;border:none;font-weight:700;cursor:pointer}
+.reset{background:#1e293b;color:#fff}.export{background:#fbbf24;color:#111827}
+@media(max-width:900px){main{grid-template-columns:1fr}.tabs{grid-template-columns:repeat(3,1fr)}}
+
+.branding-grid{display:grid;gap:12px}
+.field input{width:100%}
+
+</style>
+
+<style id="export-preview-style">
+#exportOverlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:9999}
+#exportBox{background:#fff;color:#111;border-radius:16px;padding:20px;max-width:90vw;max-height:90vh;display:flex;flex-direction:column;gap:12px;align-items:center}
+#exportBox img{max-width:80vw;max-height:70vh;border:1px solid #ddd}
+#exportClose{padding:8px 16px;border:none;border-radius:8px;cursor:pointer}
+#exportHint{font:14px Arial,sans-serif;text-align:center}
+</style>
+
+</head>
+<body>
+<header>
+<h1>GGAM? Card Back Studio</h1>
+<p>Sprint 1 · Step 1 · Foundation UI</p>
+</header>
+<main>
+<div class="panel">
+<div class="tabs">
+<button class="active" data-tab="branding">Branding</button>
+<button data-tab="layers">Layers</button>
+<button data-tab="border">Border</button>
+
+</div>
+<div class="content">
+<div class="tab active" id="branding">
+<div class="branding-grid">
+<div class="field"><label>Brand Logo</label><input id="logoInput" value="GGAM?"></div>
+<div class="field"><label>Collection</label><input id="collectionInput" value="XANDER COLLECTION"></div>
+<div class="field"><label>Series</label><input id="seriesInput" value="Founder Series"></div>
+<div class="field"><label>Tagline</label><input id="taglineInput" value="From Our Hearts To Their Paws"></div>
+<div class="field"><label>Card Number</label><input id="serialInput" value="001 / 050"></div>
+</div>
+</div>
+<div class="tab" id="layers">
+<label>Background Image</label>
+<input id="bgUpload" type="file" accept="image/*">
+<button class="fake" id="bgRemove">Remove Background</button>
+<label>Zoom</label><input id="bgScale" type="range" min="50" max="200" value="100">
+<label>Rotation</label><input id="bgRotate" type="range" min="-180" max="180" value="0">
+<label>Horizontal Offset</label><input id="bgX" type="range" min="-200" max="200" value="0">
+<label>Vertical Offset</label><input id="bgY" type="range" min="-200" max="200" value="0">
+<label>Brightness</label><input id="bgBrightness" type="range" min="0" max="200" value="100">
+<label>Contrast</label><input id="bgContrast" type="range" min="0" max="200" value="100">
+<label>Saturation</label><input id="bgSaturation" type="range" min="0" max="200" value="100">
+
+<label>Pattern Image</label>
+<input id="patternUpload" type="file" accept="image/*">
+<button class="fake" id="patternRemove">Remove Pattern</button>
+<label>Logo PNG</label>
+<input id="logoUpload" type="file" accept="image/png,image/*">
+<button class="fake" id="logoRemove">Remove Logo</button>
+<label>FX Overlay</label>
+<input id="fxUpload" type="file" accept="image/*">
+<button class="fake" id="fxRemove">Remove FX</button>
+<label>FX Position</label>
+<select id="fxOrder">
+<option value="above">Above Logo</option>
+<option value="below">Below Logo</option>
+</select>
+</div>
+<div class="tab" id="border">
+<label>Border Style</label>
+<select id="borderStyle">
+<option>Classic</option>
+<option>Luxury</option>
+<option>Sticker Bomb</option>
+<option>Pawprint</option>
+<option>Comic</option>
+</select>
+<label>Border Width</label><input id="borderWidth" type="range" min="0" max="30" value="10">
+<label>Corner Radius</label><input id="borderRadius" type="range" min="0" max="50" value="22">
+<label>Border Colour</label><input id="borderColor" type="color" value="#111827">
+</div>
+</div>
+<div class="footer">
+<button class="reset">Reset</button>
+<button class="export" id="exportBtn">Export PNG</button>
+</div>
+</div>
+<div class="previewWrap">
+<div class="card">
+<div id="bgLayer" class="bgLayer"></div>
+<div id="patternLayer" class="patternLayer"></div>
+<div id="artStack" style="position:absolute;inset:0;z-index:2;">
+<img id="logoLayer" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;display:none;">
+<img id="fxLayer" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;display:none;mix-blend-mode:screen;opacity:.8;">
+</div>
+<div style="position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%">
+<div class="logo" id="previewLogo">GGAM?</div>
+<div class="collection" id="previewCollection">XANDER COLLECTION</div>
+<div class="tag" id="previewTagline">From Our Hearts<br>To Their Paws</div>
+<div class="series" id="previewSeries">Founder Series</div>
+<div class="serial" id="previewSerial">001 / 050</div></div>
+</div>
+</main>
+<script>
+document.querySelectorAll('.tabs button').forEach(btn=>{
+ btn.onclick=()=>{
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(btn.dataset.tab).classList.add('active');
+ };
+});
+
+
+const studioState={
+  branding:{
+    logo:"GGAM?",
+    collection:"XANDER COLLECTION",
+    series:"Founder Series",
+    tagline:"From Our Hearts To Their Paws",
+    serial:"001 / 050"
+  },
+  layers:{
+    background:{image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100},
+    pattern:{image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100},
+    logo:{image:null,scale:100,rotate:0,x:0,y:0},
+    fx:{image:null,order:'above'}
+  },
+  border:{style:"Classic",width:10,radius:22,color:"#111827"},
+};
+
+function renderBackground(){}
+function renderPattern(){}
+function renderLogo(){
+ const el=document.getElementById("logoLayer");
+ const l=studioState.layers.logo;
+ if(!l.image){
+   el.style.display="none";
+   return;
+ }
+ el.src=l.image;
+ el.style.display="block";
+ el.style.transform=`translate(${l.x}px,${l.y}px) scale(${l.scale/100}) rotate(${l.rotate}deg)`;
+}
+function renderFX(){
+ const fx=document.getElementById('fxLayer');
+ const logo=document.getElementById('logoLayer');
+ const stack=document.getElementById('artStack');
+ const f=studioState.layers.fx;
+ if(!f.image){
+   fx.style.display='none';
+   return;
+ }
+ fx.src=f.image;
+ fx.style.display='block';
+
+ if(f.order==='below'){
+   stack.insertBefore(fx,logo);
+ }else{
+   stack.appendChild(fx);
+ }
+}
+
+
+const styles={
+ Classic:{shadow:'0 20px 40px rgba(0,0,0,.5)',bg:'linear-gradient(160deg,#334155,#111827)'},
+ Luxury:{shadow:'0 0 25px rgba(251,191,36,.7)',bg:'linear-gradient(160deg,#5b3a00,#c99700)'},
+ "Sticker Bomb":{shadow:'0 20px 40px rgba(0,0,0,.5)',bg:'linear-gradient(135deg,#374151,#1f2937)'},
+ Pawprint:{shadow:'0 0 18px rgba(255,255,255,.25)',bg:'linear-gradient(160deg,#3f3f46,#18181b)'},
+ Comic:{shadow:'0 0 0 rgba(0,0,0,0)',bg:'linear-gradient(160deg,#2563eb,#0f172a)'}
+};
+
+function renderBorder(){
+ const c=document.querySelector('.card');
+ const b=studioState.border;
+ c.style.borderWidth=b.width+'px';
+ c.style.borderColor=b.color;
+ c.style.borderRadius=b.radius+'px';
+ const s=styles[b.style];
+ if(s){
+   c.style.background=s.bg;
+   c.style.boxShadow=s.shadow;
+ }
+}
+
+function renderBranding(){
+  previewLogo.textContent=studioState.branding.logo;
+  previewCollection.textContent=studioState.branding.collection;
+  previewSeries.textContent=studioState.branding.series;
+  previewSerial.textContent=studioState.branding.serial;
+  previewTagline.innerHTML=studioState.branding.tagline.replace(/\n/g,"<br>");
+}
+
+function renderStudio(){
+  renderBackground();
+  renderPattern();
+  renderLogo();
+  renderFX();
+  renderBorder();
+  renderBranding();
+}
+
+function bindInput(id,key){
+  document.getElementById(id).addEventListener("input",e=>{
+    studioState.branding[key]=e.target.value;
+    renderStudio();
+  });
+}
+
+bindInput("logoInput","logo");
+bindInput("collectionInput","collection");
+bindInput("seriesInput","series");
+bindInput("taglineInput","tagline");
+bindInput("serialInput","serial");
+
+document.querySelector('.reset').addEventListener('click',()=>{
+  studioState.branding={
+    logo:'GGAM?',collection:'XANDER COLLECTION',series:'Founder Series',tagline:'From Our Hearts To Their Paws',serial:'001 / 050'
+  };
+  studioState.layers.background={image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100};
+  studioState.layers.pattern={image:null,scale:100,rotate:0,x:0,y:0,brightness:100,contrast:100,saturation:100};
+  studioState.layers.logo={image:null,scale:100,rotate:0,x:0,y:0};
+  studioState.layers.fx={image:null,order:'above'};
+  ['logoInput','collectionInput','seriesInput','taglineInput','serialInput'].forEach(id=>{});
+  logoInput.value=studioState.branding.logo;
+  collectionInput.value=studioState.branding.collection;
+  seriesInput.value=studioState.branding.series;
+  taglineInput.value=studioState.branding.tagline;
+  serialInput.value=studioState.branding.serial;
+  if(bgUpload){bgUpload.value='';}
+  if(patternUpload){patternUpload.value='';}
+  if(logoUpload){logoUpload.value='';}
+  if(fxUpload){fxUpload.value='';}
+  fxOrder.value='above';
+  borderWidth.value=10;
+  borderRadius.value=22;
+  borderColor.value='#111827';
+  studioState.border={style:'Classic',width:10,radius:22,color:'#111827'};
+  borderStyle.value='Classic';
+  const logoLayer=document.getElementById('logoLayer');
+  if(logoLayer){
+    logoLayer.removeAttribute('src');
+    logoLayer.style.display='none';
+  }
+  ['bgScale','bgRotate','bgX','bgY','bgBrightness','bgContrast','bgSaturation'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    const map={bgScale:100,bgRotate:0,bgX:0,bgY:0,bgBrightness:100,bgContrast:100,bgSaturation:100};
+    el.value=map[id];
+  });
+  renderStudio();
+});
+
+
+function renderBackground(){
+ const bg=document.getElementById('bgLayer');
+ if(studioState.layers.background.image){
+   bg.style.backgroundImage=`url(${studioState.layers.background.image})`;
+ const b=studioState.layers.background;
+ bg.style.backgroundSize=`${b.scale}%`;
+ bg.style.backgroundPosition=`calc(50% + ${b.x}px) calc(50% + ${b.y}px)`;
+ bg.style.transform=`rotate(${b.rotate}deg)`;
+ bg.style.filter=`brightness(${b.brightness}%) contrast(${b.contrast}%) saturate(${b.saturation}%)`;
+ }else{
+   bg.style.backgroundImage='none';
+ }
+}
+document.getElementById('bgUpload').addEventListener('change',e=>{
+ const f=e.target.files[0];
+ if(!f) return;
+ const r=new FileReader();
+ r.onload=()=>{
+   studioState.layers.background.image=r.result;
+   renderStudio();
+ };
+ r.readAsDataURL(f);
+});
+document.getElementById('bgRemove').addEventListener('click',()=>{
+ studioState.layers.background.image=null;
+ document.getElementById('bgUpload').value='';
+ renderStudio();
+});
+
+
+[
+['bgScale','scale'],['bgRotate','rotate'],['bgX','x'],['bgY','y'],
+['bgBrightness','brightness'],['bgContrast','contrast'],['bgSaturation','saturation']
+].forEach(([id,key])=>{
+ document.getElementById(id).addEventListener('input',e=>{
+   studioState.layers.background[key]=Number(e.target.value);
+   renderStudio();
+ });
+});
+
+
+function renderPattern(){
+ const p=document.getElementById('patternLayer');
+ const s=studioState.layers.pattern;
+ if(!s.image){p.style.backgroundImage='none';return;}
+ p.style.backgroundImage=`url(${s.image})`;
+ p.style.backgroundSize=`${s.scale}%`;
+ p.style.backgroundPosition=`calc(50% + ${s.x}px) calc(50% + ${s.y}px)`;
+ p.style.transform=`rotate(${s.rotate}deg)`;
+ p.style.filter=`brightness(${s.brightness}%) contrast(${s.contrast}%) saturate(${s.saturation}%)`;
+}
+document.getElementById('patternUpload').addEventListener('change',e=>{
+ const f=e.target.files[0]; if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{studioState.layers.pattern.image=r.result;renderStudio();};
+ r.readAsDataURL(f);
+});
+document.getElementById('patternRemove').addEventListener('click',()=>{
+ studioState.layers.pattern.image=null;
+ patternUpload.value='';
+ renderStudio();
+});
+
+
+document.getElementById("logoUpload").addEventListener("change",e=>{
+ const f=e.target.files[0];
+ if(!f) return;
+ const r=new FileReader();
+ r.onload=()=>{studioState.layers.logo.image=r.result;renderStudio();};
+ r.readAsDataURL(f);
+});
+document.getElementById("logoRemove").addEventListener("click",()=>{
+ studioState.layers.logo.image=null;
+ logoUpload.value="";
+ renderStudio();
+});
+
+
+document.getElementById('fxUpload').addEventListener('change',e=>{
+ const f=e.target.files[0]; if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{studioState.layers.fx.image=r.result;renderStudio();};
+ r.readAsDataURL(f);
+});
+document.getElementById('fxRemove').addEventListener('click',()=>{
+ studioState.layers.fx.image=null;
+ fxUpload.value='';
+ renderStudio();
+});
+document.getElementById('fxOrder').addEventListener('change',e=>{
+ studioState.layers.fx.order=e.target.value;
+ renderStudio();
+});
+
+
+['borderWidth','borderRadius','borderColor'].forEach(id=>{
+ document.getElementById(id).addEventListener('input',e=>{
+   if(id==='borderWidth') studioState.border.width=Number(e.target.value);
+   if(id==='borderRadius') studioState.border.radius=Number(e.target.value);
+   if(id==='borderColor') studioState.border.color=e.target.value;
+   renderStudio();
+ });
+});
+
+
+document.getElementById('borderStyle').addEventListener('change',e=>{
+ studioState.border.style=e.target.value;
+ renderStudio();
+});
+
+renderStudio();
+
+async function waitForNextPaint(){
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+}
+
+function inlineComputedStyles(src,dst){
+  const cs=getComputedStyle(src);
+  let css='';
+  for(const p of cs){
+    css+=`${p}:${cs.getPropertyValue(p)};`;
+  }
+  dst.setAttribute('style',css);
+  [...src.children].forEach((c,i)=>inlineComputedStyles(c,dst.children[i]));
+}
+
+async function toDataUrl(img){
+  if(!img.src || img.src.startsWith('data:')) return;
+  const res=await fetch(img.src);
+  const blob=await res.blob();
+  const fr=new FileReader();
+  return await new Promise(resolve=>{
+    fr.onload=()=>resolve(fr.result);
+    fr.readAsDataURL(blob);
+  });
+}
+
+async function exportCard(){
+  await document.fonts.ready;
+  await waitForNextPaint();
+
+  const original=document.querySelector('.card');
+  const clone=original.cloneNode(true);
+  inlineComputedStyles(original,clone);
+
+  const origImgs=[...original.querySelectorAll('img')];
+  const cloneImgs=[...clone.querySelectorAll('img')];
+  for(let i=0;i<origImgs.length;i++){
+    const d=await toDataUrl(origImgs[i]);
+    if(d) cloneImgs[i].src=d;
+  }
+
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="350" height="490">
+    <foreignObject width="100%" height="100%">${new XMLSerializer().serializeToString(clone)}</foreignObject>
+  </svg>`;
+
+  const img=new Image();
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  await new Promise(r=>img.onload=r);
+
+  const canvas=document.createElement('canvas');
+  canvas.width=1400;
+  canvas.height=1960;
+  const ctx=canvas.getContext('2d');
+  ctx.drawImage(img,0,0,1400,1960);
+
+
+const dataUrl=canvas.toDataURL('image/png');
+const overlay=document.getElementById('exportOverlay');
+const imgEl=document.getElementById('exportPreview');
+const hint=document.getElementById('exportHint');
+const mobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+hint.innerHTML=mobile?
+  '<strong>Press & hold</strong> the image, then choose <strong>Save to Photos</strong>.':
+  '<strong>Right-click</strong> the image and choose <strong>Save Image As...</strong>';
+imgEl.src=dataUrl;
+overlay.style.display='flex';
+
+}
+
+document.getElementById('exportBtn').addEventListener('click',exportCard);
+
+
+document.getElementById('exportClose').addEventListener('click',()=>{
+  document.getElementById('exportOverlay').style.display='none';
+});
+document.getElementById('exportOverlay').addEventListener('click',e=>{
+  if(e.target.id==='exportOverlay') e.currentTarget.style.display='none';
+});
+
+</script>
+
+<div id="exportOverlay">
+  <div id="exportBox">
+    <div id="exportHint"></div>
+    <img id="exportPreview" alt="Export Preview">
+    <button id="exportClose">Close</button>
+  </div>
+</div>
+
+</body>
+</html>
