@@ -461,11 +461,17 @@ overlay.style.display='flex';
 document.getElementById('exportBtn').addEventListener('click',exportCard);
 
 
-document.getElementById('exportClose').addEventListener('click',()=>{
-  document.getElementById('exportOverlay').style.display='none';
-});
-document.getElementById('exportOverlay').addEventListener('click',e=>{
-  if(e.target.id==='exportOverlay') e.currentTarget.style.display='none';
+window.addEventListener('DOMContentLoaded',()=>{
+  const overlay=document.getElementById('exportOverlay');
+  const close=document.getElementById('exportClose');
+  if(close){
+    close.addEventListener('click',()=>{overlay.style.display='none';});
+  }
+  if(overlay){
+    overlay.addEventListener('click',e=>{
+      if(e.target===overlay) overlay.style.display='none';
+    });
+  }
 });
 
 </script>
